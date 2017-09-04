@@ -5848,4 +5848,6 @@
          unlock pixel-exclusive features -->
     <bool name="config_spoofGoogleApps">true</bool>
 
+    <!-- Is the battery LED intrusive? Used to decide if there should be a disable option -->
+    <bool name="config_intrusiveBatteryLed">false</bool>
 </resources>

@@ -1166,6 +1166,9 @@
     <!-- Name of status bar -->
     <string name="status_bar">Status bar</string>
 
+    <!-- Title of statusbar tuner -->
+    <string name="status_bar_icons">Status bar icons</string>
+
     <!-- Name of System UI demo mode (mode with preset icons for screenshots) -->
     <string name="demo_mode">System UI demo mode</string>
 

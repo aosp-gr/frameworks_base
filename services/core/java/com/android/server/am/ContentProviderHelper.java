@@ -70,6 +70,7 @@ import android.util.SparseArray;
 import com.android.internal.annotations.GuardedBy;
 import com.android.internal.os.BackgroundThread;
 import com.android.internal.util.ArrayUtils;
+import com.android.internal.util.CutoutFullscreenController;
 import com.android.server.LocalServices;
 import com.android.server.RescueParty;
 import com.android.server.pm.parsing.pkg.AndroidPackage;
@@ -1256,6 +1257,7 @@ public class ContentProviderHelper {
         new DevelopmentSettingsObserver(); // init to observe developer settings enable/disable
         SettingsToPropertiesMapper.start(mService.mContext.getContentResolver());
         mService.mOomAdjuster.initSettings();
+        mService.mCutoutFullscreenController = new CutoutFullscreenController(mService.mContext);
 
         // Now that the settings provider is published we can consider sending in a rescue party.
         RescueParty.onSettingsProviderPublished(mService.mContext);

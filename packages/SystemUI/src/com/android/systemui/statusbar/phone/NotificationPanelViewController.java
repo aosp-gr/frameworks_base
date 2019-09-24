@@ -688,6 +688,8 @@ public class NotificationPanelViewController extends PanelViewController {
         }
     };
 
+    private int mStatusBarHeaderHeight;
+
     @Inject
     public NotificationPanelViewController(NotificationPanelView view,
             @Main Resources resources,
@@ -982,6 +984,8 @@ public class NotificationPanelViewController extends PanelViewController {
         mScreenCornerRadius = (int) ScreenDecorationsUtils.getWindowCornerRadius(mResources);
         mLockscreenNotificationQSPadding = mResources.getDimensionPixelSize(
                 R.dimen.notification_side_paddings);
+        mStatusBarHeaderHeight = mResources.getDimensionPixelSize(
+                R.dimen.status_bar_height);
     }
 
     private void updateViewControllers(KeyguardStatusView keyguardStatusView,
@@ -3962,6 +3966,15 @@ public class NotificationPanelViewController extends PanelViewController {
 
                 if (mBarState == StatusBarState.KEYGUARD) {
                     mDoubleTapGestureListener.onTouchEvent(event);
+                } else if (!mQsExpanded
+                        && mDoubleTapToSleepEnabled
+                        && event.getY() < mStatusBarHeaderHeight) {
+                    mDoubleTapGestureListener.onTouchEvent(event);
+                    // quick pulldown can trigger those values
+                    // on double tap - so reset them
+                    mQsExpandImmediate = false;
+                    requestPanelHeightUpdate();
+                    setListening(false);
                 }
 
                 // Make sure the next touch won't the blocked after the current ends.
@@ -4710,5 +4723,9 @@ public class NotificationPanelViewController extends PanelViewController {
             updateMaxHeadsUpTranslation();
             return insets;
         }
+    }
+
+    public void updateDoubleTapToSleep(boolean doubleTapToSleepEnabled) {
+        mDoubleTapToSleepEnabled = doubleTapToSleepEnabled;
     }
 }

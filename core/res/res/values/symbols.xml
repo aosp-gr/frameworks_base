@@ -4491,4 +4491,7 @@
   <java-symbol type="array" name="config_roundedCornerBottomRadiusAdjustmentArray" />
   <java-symbol type="bool" name="config_secondaryBuiltInDisplayIsRound" />
   <java-symbol type="array" name="config_builtInDisplayIsRoundArray" />
+
+  <!-- Vendor platform signatures -->
+  <java-symbol type="array" name="config_vendorPlatformSignatures" />
 </resources>

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.systemui.dagger;
+package com.google.android.systemui.dagger;
 
 import static com.android.systemui.Dependency.ALLOW_NOTIFICATION_LONG_PRESS_NAME;
 import static com.android.systemui.Dependency.LEAK_REPORT_EMAIL_NAME;
@@ -28,6 +28,7 @@ import androidx.annotation.Nullable;
 
 import com.android.keyguard.KeyguardViewController;
 import com.android.systemui.broadcast.BroadcastDispatcher;
+import com.android.systemui.dagger.SysUISingleton;
 import com.android.systemui.dagger.qualifiers.Background;
 import com.android.systemui.dagger.qualifiers.Main;
 import com.android.systemui.demomode.DemoModeController;
@@ -69,6 +70,9 @@ import com.android.systemui.statusbar.policy.IndividualSensorPrivacyControllerIm
 import com.android.systemui.statusbar.policy.SensorPrivacyController;
 import com.android.systemui.statusbar.policy.SensorPrivacyControllerImpl;
 
+import com.google.android.systemui.NotificationLockscreenUserManagerGoogle;
+import com.google.android.systemui.power.EnhancedEstimatesGoogleImpl;
+
 import javax.inject.Named;
 
 import dagger.Binds;
@@ -84,7 +88,7 @@ import dagger.Provides;
         PowerModule.class,
         QSModule.class
 })
-public abstract class SystemUIDefaultModule {
+public abstract class SystemUIGoogleModule {
 
     @SysUISingleton
     @Provides
@@ -95,11 +99,11 @@ public abstract class SystemUIDefaultModule {
     }
 
     @Binds
-    abstract EnhancedEstimates bindEnhancedEstimates(EnhancedEstimatesImpl enhancedEstimates);
+    abstract EnhancedEstimates bindEnhancedEstimates(EnhancedEstimatesGoogleImpl enhancedEstimates);
 
     @Binds
     abstract NotificationLockscreenUserManager bindNotificationLockscreenUserManager(
-            NotificationLockscreenUserManagerImpl notificationLockscreenUserManager);
+            NotificationLockscreenUserManagerGoogle notificationLockscreenUserManager);
 
     @Provides
     @SysUISingleton

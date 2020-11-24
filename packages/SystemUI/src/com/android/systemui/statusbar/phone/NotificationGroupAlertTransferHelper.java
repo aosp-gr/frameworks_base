@@ -36,7 +36,6 @@ import com.android.systemui.statusbar.notification.collection.legacy.Notificatio
 import com.android.systemui.statusbar.notification.row.NotificationRowContentBinder.InflationFlag;
 import com.android.systemui.statusbar.notification.row.RowContentBindParams;
 import com.android.systemui.statusbar.notification.row.RowContentBindStage;
-import com.android.systemui.statusbar.phone.dagger.StatusBarPhoneModule;
 import com.android.systemui.statusbar.policy.HeadsUpManager;
 import com.android.systemui.statusbar.policy.OnHeadsUpChangedListener;
 
@@ -78,7 +77,7 @@ public class NotificationGroupAlertTransferHelper implements OnHeadsUpChangedLis
     private boolean mIsDozing;
 
     /**
-     * Injected constructor. See {@link StatusBarPhoneModule}.
+     * Injected constructor.
      */
     public NotificationGroupAlertTransferHelper(RowContentBindStage bindStage) {
         Dependency.get(StatusBarStateController.class).addCallback(this);

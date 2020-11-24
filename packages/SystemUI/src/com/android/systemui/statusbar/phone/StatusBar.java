@@ -229,7 +229,6 @@ import com.android.systemui.statusbar.notification.stack.NotificationListContain
 import com.android.systemui.statusbar.notification.stack.NotificationStackScrollLayout;
 import com.android.systemui.statusbar.notification.stack.NotificationStackScrollLayoutController;
 import com.android.systemui.statusbar.phone.dagger.StatusBarComponent;
-import com.android.systemui.statusbar.phone.dagger.StatusBarPhoneModule;
 import com.android.systemui.statusbar.phone.ongoingcall.OngoingCallController;
 import com.android.systemui.statusbar.policy.BatteryController;
 import com.android.systemui.statusbar.policy.BrightnessMirrorController;
@@ -716,7 +715,7 @@ public class StatusBar extends SystemUI implements DemoMode,
      * Public constructor for StatusBar.
      *
      * StatusBar is considered optional, and therefore can not be marked as @Inject directly.
-     * Instead, an @Provide method is included. See {@link StatusBarPhoneModule}.
+     * Instead, an @Provide method is included.
      */
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     public StatusBar(

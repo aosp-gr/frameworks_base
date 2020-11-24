@@ -1,20 +1,4 @@
-/*
- * Copyright (C) 2020 The Android Open Source Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-package com.android.systemui.statusbar.phone.dagger;
+package com.google.android.systemui.statusbar.phone;
 
 import static com.android.systemui.Dependency.TIME_TICK_HANDLER_NAME;
 
@@ -28,13 +12,13 @@ import androidx.annotation.Nullable;
 import com.android.internal.logging.MetricsLogger;
 import com.android.keyguard.KeyguardUpdateMonitor;
 import com.android.keyguard.ViewMediatorCallback;
+import com.android.systemui.Dependency;
 import com.android.systemui.InitController;
 import com.android.systemui.accessibility.floatingmenu.AccessibilityFloatingMenuController;
 import com.android.systemui.assist.AssistManager;
 import com.android.systemui.broadcast.BroadcastDispatcher;
 import com.android.systemui.classifier.FalsingCollector;
 import com.android.systemui.colorextraction.SysuiColorExtractor;
-import com.android.systemui.dagger.SysUISingleton;
 import com.android.systemui.dagger.qualifiers.UiBackground;
 import com.android.systemui.demomode.DemoModeController;
 import com.android.systemui.keyguard.DismissCallbackRegistry;
@@ -97,6 +81,8 @@ import com.android.systemui.statusbar.phone.StatusBarSignalPolicy;
 import com.android.systemui.statusbar.phone.StatusBarTouchableRegionManager;
 import com.android.systemui.statusbar.phone.UnlockedScreenOffAnimationController;
 import com.android.systemui.statusbar.phone.ongoingcall.OngoingCallController;
+import com.android.systemui.statusbar.phone.dagger.StatusBarComponent;
+import com.android.systemui.statusbar.phone.dagger.StatusBarPhoneDependenciesModule;
 import com.android.systemui.statusbar.policy.BatteryController;
 import com.android.systemui.statusbar.policy.ConfigurationController;
 import com.android.systemui.statusbar.policy.DeviceProvisionedController;
@@ -112,27 +98,27 @@ import com.android.wm.shell.bubbles.Bubbles;
 import com.android.wm.shell.legacysplitscreen.LegacySplitScreen;
 import com.android.wm.shell.startingsurface.StartingSurface;
 
+import com.google.android.systemui.NotificationLockscreenUserManagerGoogle;
+import com.google.android.systemui.smartspace.SmartSpaceController;
+
+import java.io.FileDescriptor;
+import java.io.PrintWriter;
 import java.util.Optional;
 import java.util.concurrent.Executor;
 
+import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Provider;
 
 import dagger.Lazy;
-import dagger.Module;
-import dagger.Provides;
 
-/**
- * Dagger Module providing {@link StatusBar}.
- */
-@Module(includes = {StatusBarPhoneDependenciesModule.class})
-public interface StatusBarPhoneModule {
-    /**
-     * Provides our instance of StatusBar which is considered optional.
-     */
-    @Provides
-    @SysUISingleton
-    static StatusBar provideStatusBar(
+public class StatusBarGoogle extends StatusBar {
+
+    @Inject
+    public SmartSpaceController mSmartSpaceController;
+
+    public StatusBarGoogle(
+            SmartSpaceController smartSpaceController,
             Context context,
             NotificationsController notificationsController,
             LightBarController lightBarController,
@@ -207,9 +193,9 @@ public interface StatusBarPhoneModule {
             UserInfoControllerImpl userInfoControllerImpl,
             PhoneStatusBarPolicy phoneStatusBarPolicy,
             KeyguardIndicationController keyguardIndicationController,
-            DemoModeController demoModeController,
-            Lazy<NotificationShadeDepthController> notificationShadeDepthController,
             DismissCallbackRegistry dismissCallbackRegistry,
+            DemoModeController demoModeController,
+            Lazy<NotificationShadeDepthController> notificationShadeDepthControllerLazy,
             StatusBarTouchableRegionManager statusBarTouchableRegionManager,
             NotificationIconAreaController notificationIconAreaController,
             BrightnessSlider.Factory brightnessSliderFactory,
@@ -218,13 +204,12 @@ public interface StatusBarPhoneModule {
             SystemStatusAnimationScheduler animationScheduler,
             StatusBarLocationPublisher locationPublisher,
             StatusBarIconController statusBarIconController,
-            LockscreenShadeTransitionController transitionController,
+            LockscreenShadeTransitionController lockscreenShadeTransitionController,
             FeatureFlags featureFlags,
             KeyguardUnlockAnimationController keyguardUnlockAnimationController,
             UnlockedScreenOffAnimationController unlockedScreenOffAnimationController,
             Optional<StartingSurface> startingSurfaceOptional) {
-        return new StatusBar(
-                context,
+        super(context,
                 notificationsController,
                 lightBarController,
                 autoHideController,
@@ -299,7 +284,7 @@ public interface StatusBarPhoneModule {
                 keyguardIndicationController,
                 dismissCallbackRegistry,
                 demoModeController,
-                notificationShadeDepthController,
+                notificationShadeDepthControllerLazy,
                 statusBarTouchableRegionManager,
                 notificationIconAreaController,
                 brightnessSliderFactory,
@@ -308,10 +293,29 @@ public interface StatusBarPhoneModule {
                 animationScheduler,
                 locationPublisher,
                 statusBarIconController,
-                transitionController,
+                lockscreenShadeTransitionController,
                 featureFlags,
                 keyguardUnlockAnimationController,
                 unlockedScreenOffAnimationController,
                 startingSurfaceOptional);
+        mSmartSpaceController = smartSpaceController;
+    }
+
+    @Override
+    public void start() {
+        super.start();
+        ((NotificationLockscreenUserManagerGoogle) Dependency.get(NotificationLockscreenUserManager.class)).updateSmartSpaceVisibilitySettings();
+    }
+
+    @Override
+    public void setLockscreenUser(int i) {
+        super.setLockscreenUser(i);
+        mSmartSpaceController.reloadData();
+    }
+
+    @Override
+    public void dump(FileDescriptor fileDescriptor, PrintWriter printWriter, String[] strArr) {
+        super.dump(fileDescriptor, printWriter, strArr);
+        mSmartSpaceController.dump(fileDescriptor, printWriter, strArr);
     }
 }

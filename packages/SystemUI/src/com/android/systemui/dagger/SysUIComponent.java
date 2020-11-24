@@ -39,6 +39,9 @@ import com.android.wm.shell.startingsurface.StartingSurface;
 import com.android.wm.shell.tasksurfacehelper.TaskSurfaceHelper;
 import com.android.wm.shell.transition.ShellTransitions;
 
+import com.google.android.systemui.dagger.SystemUIGoogleModule;
+import com.google.android.systemui.keyguard.KeyguardSliceProviderGoogle;
+
 import java.util.Optional;
 
 import dagger.BindsInstance;
@@ -53,7 +56,7 @@ import dagger.Subcomponent;
         DependencyProvider.class,
         SystemUIBinder.class,
         SystemUIModule.class,
-        SystemUIDefaultModule.class})
+        SystemUIGoogleModule.class})
 public interface SysUIComponent {
 
     /**
@@ -156,6 +159,11 @@ public interface SysUIComponent {
      * Member injection into the supplied argument.
      */
     void inject(KeyguardSliceProvider keyguardSliceProvider);
+
+    /**
+     * Member injection into the supplied argument.
+     */
+    void inject(KeyguardSliceProviderGoogle keyguardSliceProvider);
 
     /**
      * Member injection into the supplied argument.

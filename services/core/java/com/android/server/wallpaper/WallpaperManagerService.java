@@ -207,7 +207,7 @@ public class WallpaperManagerService extends IWallpaperManager.Stub
      * wallpaper set and is created for the first time. The CLOSE_WRITE is triggered
      * every time the wallpaper is changed.
      */
-    private class WallpaperObserver extends FileObserver {
+    class WallpaperObserver extends FileObserver {
 
         final int mUserId;
         final WallpaperData mWallpaper;
@@ -225,7 +225,7 @@ public class WallpaperManagerService extends IWallpaperManager.Stub
             mWallpaperLockFile = new File(mWallpaperDir, WALLPAPER_LOCK_ORIG);
         }
 
-        private WallpaperData dataForEvent(boolean sysChanged, boolean lockChanged) {
+        WallpaperData dataForEvent(boolean sysChanged, boolean lockChanged) {
             WallpaperData wallpaper = null;
             synchronized (mLock) {
                 if (lockChanged) {
@@ -308,9 +308,18 @@ public class WallpaperManagerService extends IWallpaperManager.Stub
                             }
                             wallpaper.imageWallpaperPending = false;
                             if (sysWallpaperChanged) {
+                                IRemoteCallback.Stub callback = new IRemoteCallback.Stub() {
+                                    @Override
+                                    public void sendResult(Bundle data) throws RemoteException {
+                                        if (DEBUG) {
+                                            Slog.d(TAG, "publish system wallpaper changed!");
+                                        }
+                                        notifyWallpaperChanged(wallpaper);
+                                    }
+                                };
                                 // If this was the system wallpaper, rebind...
                                 bindWallpaperComponentLocked(mImageWallpaper, true,
-                                        false, wallpaper, null);
+                                        false, wallpaper, callback);
                                 notifyColorsWhich |= FLAG_SYSTEM;
                             }
                             if (lockWallpaperChanged
@@ -330,15 +339,9 @@ public class WallpaperManagerService extends IWallpaperManager.Stub
                             }
 
                             saveSettingsLocked(wallpaper.userId);
-
-                            // Publish completion *after* we've persisted the changes
-                            if (wallpaper.setComplete != null) {
-                                try {
-                                    wallpaper.setComplete.onWallpaperChanged();
-                                } catch (RemoteException e) {
-                                    // if this fails we don't really care; the setting app may just
-                                    // have crashed and that sort of thing is a fact of life.
-                                }
+                            // Notify the client immediately if only lockscreen wallpaper changed.
+                            if (lockWallpaperChanged && !sysWallpaperChanged) {
+                                notifyWallpaperChanged(wallpaper);
                             }
                         }
                     }
@@ -348,6 +351,18 @@ public class WallpaperManagerService extends IWallpaperManager.Stub
             // Outside of the lock since it will synchronize itself
             if (notifyColorsWhich != 0) {
                 notifyWallpaperColorsChanged(wallpaper, notifyColorsWhich);
+            }
+        }
+    }
+
+    private void notifyWallpaperChanged(WallpaperData wallpaper) {
+        // Publish completion *after* we've persisted the changes
+        if (wallpaper.setComplete != null) {
+            try {
+                wallpaper.setComplete.onWallpaperChanged();
+            } catch (RemoteException e) {
+                // if this fails we don't really care; the setting app may just
+                // have crashed and that sort of thing is a fact of life.
             }
         }
     }
@@ -363,7 +378,7 @@ public class WallpaperManagerService extends IWallpaperManager.Stub
         }
     }
 
-    private void notifyWallpaperColorsChanged(@NonNull WallpaperData wallpaper, int which) {
+    void notifyWallpaperColorsChanged(@NonNull WallpaperData wallpaper, int which) {
         if (wallpaper.connection != null) {
             wallpaper.connection.forEachDisplayConnector(connector -> {
                 notifyWallpaperColorsChangedOnDisplay(wallpaper, which, connector.mDisplayId);
@@ -567,7 +582,7 @@ public class WallpaperManagerService extends IWallpaperManager.Stub
      * Once a new wallpaper has been written via setWallpaper(...), it needs to be cropped
      * for display.
      */
-    private void generateCrop(WallpaperData wallpaper) {
+    void generateCrop(WallpaperData wallpaper) {
         boolean success = false;
 
         // Only generate crop for default display.
@@ -2814,7 +2829,7 @@ public class WallpaperManagerService extends IWallpaperManager.Stub
         return false;
     }
 
-    private boolean bindWallpaperComponentLocked(ComponentName componentName, boolean force,
+    boolean bindWallpaperComponentLocked(ComponentName componentName, boolean force,
             boolean fromUser, WallpaperData wallpaper, IRemoteCallback reply) {
         if (DEBUG_LIVE) {
             Slog.v(TAG, "bindWallpaperComponentLocked: componentName=" + componentName);
@@ -3101,7 +3116,7 @@ public class WallpaperManagerService extends IWallpaperManager.Stub
         return new JournaledFile(new File(base), new File(base + ".tmp"));
     }
 
-    private void saveSettingsLocked(int userId) {
+    void saveSettingsLocked(int userId) {
         JournaledFile journal = makeJournaledFile(userId);
         FileOutputStream fstream = null;
         try {
@@ -3250,7 +3265,7 @@ public class WallpaperManagerService extends IWallpaperManager.Stub
      * Important: this method loads settings to initialize the given user's wallpaper data if
      * there is no current in-memory state.
      */
-    private WallpaperData getWallpaperSafeLocked(int userId, int which) {
+    WallpaperData getWallpaperSafeLocked(int userId, int which) {
         // We're setting either just system (work with the system wallpaper),
         // both (also work with the system wallpaper), or just the lock
         // wallpaper (update against the existing lock wallpaper if any).

@@ -27,6 +27,10 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.UserHandle;
 import android.provider.Settings;
+import android.telephony.SubscriptionManager;
+import android.text.BidiFormatter;
+import android.text.format.Formatter;
+import android.text.format.Formatter.BytesResult;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.accessibility.AccessibilityNodeInfo;
@@ -37,6 +41,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 
 import com.android.settingslib.development.DevelopmentSettingsEnabler;
+import com.android.settingslib.net.DataUsageController;
 import com.android.systemui.R;
 
 /**
@@ -45,7 +50,7 @@ import com.android.systemui.R;
  */
 public class QSFooterView extends FrameLayout {
     private PageIndicator mPageIndicator;
-    private TextView mBuildText;
+    private TextView mUsageText;
     private View mActionsContainer;
 
     protected TouchAnimator mFooterAnimator;
@@ -63,7 +68,7 @@ public class QSFooterView extends FrameLayout {
         @Override
         public void onChange(boolean selfChange, Uri uri) {
             super.onChange(selfChange, uri);
-            setBuildText();
+            setUsageText();
         }
     };
 
@@ -76,18 +81,28 @@ public class QSFooterView extends FrameLayout {
         super.onFinishInflate();
         mPageIndicator = findViewById(R.id.footer_page_indicator);
         mActionsContainer = requireViewById(R.id.qs_footer_actions);
-        mBuildText = findViewById(R.id.build);
+        mUsageText = findViewById(R.id.build);
 
         updateResources();
         setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_YES);
-        setBuildText();
+        setUsageText();
     }
 
-    private void setBuildText() {
-        if (mBuildText == null) return;
-        mBuildText.setText(null);
-        mShouldShowBuildText = false;
-        mBuildText.setSelected(false);
+    private void setUsageText() {
+        if (mUsageText == null) return;
+        DataUsageController mobileDataController = new DataUsageController(mContext);
+        mobileDataController.setSubscriptionId(
+                SubscriptionManager.getDefaultDataSubscriptionId());
+        final DataUsageController.DataUsageInfo info = mobileDataController.getDailyDataUsageInfo();
+        mUsageText.setText(formatDataUsage(info.usageLevel) + " " +
+                mContext.getResources().getString(R.string.usage_data));
+    }
+
+    private CharSequence formatDataUsage(long byteValue) {
+        final BytesResult res = Formatter.formatBytes(mContext.getResources(), byteValue,
+                Formatter.FLAG_IEC_UNITS);
+        return BidiFormatter.getInstance().unicodeWrap(mContext.getString(
+                com.android.internal.R.string.fileSizeSuffix, res.value, res.units));
     }
 
     void updateExpansion() {
@@ -116,7 +131,7 @@ public class QSFooterView extends FrameLayout {
         TouchAnimator.Builder builder = new TouchAnimator.Builder()
                 .addFloat(mActionsContainer, "alpha", 0, 1)
                 .addFloat(mPageIndicator, "alpha", 0, 1)
-                .addFloat(mBuildText, "alpha", 0, 1)
+                .addFloat(mUsageText, "alpha", 0, 1)
                 .setStartDelay(0.9f);
         return builder.build();
     }
@@ -186,16 +201,11 @@ public class QSFooterView extends FrameLayout {
     void updateEverything() {
         post(() -> {
             updateVisibilities();
-            updateClickabilities();
             setClickable(false);
         });
     }
 
-    private void updateClickabilities() {
-        mBuildText.setLongClickable(mBuildText.getVisibility() == View.VISIBLE);
-    }
-
     private void updateVisibilities() {
-        mBuildText.setVisibility(mExpanded && mShouldShowBuildText ? View.VISIBLE : View.INVISIBLE);
+        mUsageText.setVisibility(mExpanded ? View.VISIBLE : View.INVISIBLE);
     }
 }

@@ -2345,4 +2345,7 @@
 
     <!-- Title for User Switch dialog. [CHAR LIMIT=20] -->
     <string name="qs_user_switch_dialog_title">Select user</string>
+
+     <!-- Data usage info -->
+    <string name="usage_data">used today</string>
 </resources>

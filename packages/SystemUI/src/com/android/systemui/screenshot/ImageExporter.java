@@ -19,8 +19,14 @@ package com.android.systemui.screenshot;
 import static android.os.FileUtils.closeQuietly;
 
 import android.annotation.IntRange;
+import android.app.ActivityTaskManager;
+import android.app.KeyguardManager;
 import android.content.ContentResolver;
 import android.content.ContentValues;
+import android.content.Context;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.net.Uri;
@@ -60,6 +66,11 @@ class ImageExporter {
 
     // ex: 'Screenshot_20201215-090626.png'
     private static final String FILENAME_PATTERN = "Screenshot_%1$tY%<tm%<td-%<tH%<tM%<tS.%2$s";
+
+    // ex: 'Screenshot_20201215-090626_Settings.png'
+    private static final String FILENAME_PATTERN_APPNAME =
+            "Screenshot_%1$tY%<tm%<td-%<tH%<tM%<tS_%2$s.%3$s";
+
     private static final String SCREENSHOTS_PATH = Environment.DIRECTORY_PICTURES
             + File.separator + Environment.DIRECTORY_SCREENSHOTS;
 
@@ -142,8 +153,9 @@ class ImageExporter {
      *
      * @return a listenable future result
      */
-    ListenableFuture<Result> export(Executor executor, UUID requestId, Bitmap bitmap) {
-        return export(executor, requestId, bitmap, ZonedDateTime.now());
+    ListenableFuture<Result> export(Executor executor, UUID requestId, Bitmap bitmap,
+            Context context) {
+        return export(executor, requestId, bitmap, ZonedDateTime.now(), context);
     }
 
     /**
@@ -155,10 +167,10 @@ class ImageExporter {
      * @return a listenable future result
      */
     ListenableFuture<Result> export(Executor executor, UUID requestId, Bitmap bitmap,
-            ZonedDateTime captureTime) {
+            ZonedDateTime captureTime, Context context) {
 
         final Task task = new Task(mResolver, requestId, bitmap, captureTime, mCompressFormat,
-                mQuality, /* publish */ true);
+                mQuality, /* publish */ true, context);
 
         return CallbackToFutureAdapter.getFuture(
                 (completer) -> {
@@ -229,16 +241,18 @@ class ImageExporter {
         private final int mQuality;
         private final String mFileName;
         private final boolean mPublish;
+        private final Context mContext;
 
         Task(ContentResolver resolver, UUID requestId, Bitmap bitmap, ZonedDateTime captureTime,
-                CompressFormat format, int quality, boolean publish) {
+                CompressFormat format, int quality, boolean publish, Context context) {
             mResolver = resolver;
             mRequestId = requestId;
             mBitmap = bitmap;
             mCaptureTime = captureTime;
             mFormat = format;
             mQuality = quality;
-            mFileName = createFilename(mCaptureTime, mFormat);
+            mContext = context;
+            mFileName = createFilename(mCaptureTime, mFormat, mContext);
             mPublish = publish;
         }
 
@@ -377,8 +391,32 @@ class ImageExporter {
     }
 
     @VisibleForTesting
-    static String createFilename(ZonedDateTime time, CompressFormat format) {
-        return String.format(FILENAME_PATTERN, time, fileExtension(format));
+    static String createFilename(ZonedDateTime time, CompressFormat format, Context context) {
+        String appLabel = null;
+
+        if (!context.getSystemService(KeyguardManager.class).isKeyguardLocked()) {
+            final PackageManager pm = context.getPackageManager();
+            try {
+                final ActivityTaskManager.RootTaskInfo focusedTask =
+                        ActivityTaskManager.getService().getFocusedRootTaskInfo();
+                if (focusedTask != null && focusedTask.topActivity != null) {
+                    final ApplicationInfo ai = pm.getApplicationInfo(
+                            focusedTask.topActivity.getPackageName(), 0);
+                    if (ai != null) {
+                        appLabel = pm.getApplicationLabel(ai).toString();
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+       }
+
+       if (appLabel != null) {
+           return String.format(FILENAME_PATTERN_APPNAME, time, appLabel.replaceAll(
+                   "[\\\\/:*?\"<>|\\s]+", "_"), fileExtension(format));
+       } else {
+           return String.format(FILENAME_PATTERN, time, fileExtension(format));
+       }
     }
 
     static ContentValues createMetadata(ZonedDateTime captureTime, CompressFormat format,

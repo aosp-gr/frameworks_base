@@ -364,7 +364,7 @@ public final class PendingIntent implements Parcelable {
                 "Cannot set both FLAG_IMMUTABLE and FLAG_MUTABLE for PendingIntent");
         }
 
-        if (Compatibility.isChangeEnabled(PENDING_INTENT_EXPLICIT_MUTABILITY_REQUIRED)
+        /* if (Compatibility.isChangeEnabled(PENDING_INTENT_EXPLICIT_MUTABILITY_REQUIRED)
                 && !flagImmutableSet && !flagMutableSet) {
             String msg = packageName + ": Targeting S+ (version " + Build.VERSION_CODES.S
                     + " and above) requires that one of FLAG_IMMUTABLE or FLAG_MUTABLE"
@@ -373,7 +373,7 @@ public final class PendingIntent implements Parcelable {
                     + " depends on the PendingIntent being mutable, e.g. if it needs to"
                     + " be used with inline replies or bubbles.";
                 throw new IllegalArgumentException(msg);
-        }
+        } */
     }
 
     /**

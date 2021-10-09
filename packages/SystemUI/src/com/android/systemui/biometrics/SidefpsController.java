@@ -176,7 +176,7 @@ public class SidefpsController {
                 // TODO(b/188690214): L155-L173 can be removed once sensorLocationX,
                 //  sensorLocationY, and sensorRadius are defined in sensorProps by the HAL
                 int sensorLocationX = 25;
-                int sensorLocationY = 610;
+                int sensorLocationY = 1020;
                 int sensorRadius = 112;
 
                 FingerprintSensorPropertiesInternal tempProps =

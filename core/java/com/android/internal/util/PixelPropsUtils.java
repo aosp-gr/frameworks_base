@@ -39,6 +39,8 @@ public class PixelPropsUtils {
 
     static {
         propsToKeep = new HashMap<>();
+        propsToKeep.put("com.google.android.gms", new ArrayList<String>(Arrays.asList(
+                "IS_DEBUGGABLE", "IS_ENG", "IS_USERDEBUG", "IS_USER", "TYPE")));
         propsToChange = new HashMap<>();
         propsToChange.put("BRAND", "google");
         propsToChange.put("MANUFACTURER", "Google");
@@ -65,11 +67,12 @@ public class PixelPropsUtils {
                     if (DEBUG) Log.d(TAG, "Not defining " + key + " prop for: " + packageName);
                     continue;
                 }
-                if (packageName.equals("com.google.android.gms")) {
-                    setPropValue("FINGERPRINT", "google/walleye/walleye:8.1.0/OPM1.171019.011/4448085:user/release-keys");
-                }
                 if (DEBUG) Log.d(TAG, "Defining " + key + " prop for: " + packageName);
                 setPropValue(key, value);
+            }
+            if (packageName.equals("com.google.android.gms")) {
+                setPropValue("FINGERPRINT", "google/walleye/walleye:8.1.0/OPM1.171019.011/4448085:user/release-keys");
+                setPropValue("TYPE", "userdebug");
             }
         }
     }

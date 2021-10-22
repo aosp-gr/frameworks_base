@@ -60,6 +60,9 @@ public class PixelPropsUtils {
                     if (DEBUG) Log.d(TAG, "Not defining " + key + " prop for: " + packageName);
                     continue;
                 }
+                if (packageName.equals("com.google.android.gms") && key.equals("FINGERPRINT")) {
+                    value = "google/walleye/walleye:8.1.0/OPM1.171019.011/4448085:user/release-keys";
+                }
                 if (DEBUG) Log.d(TAG, "Defining " + key + " prop for: " + packageName);
                 setPropValue(key, value);
             }

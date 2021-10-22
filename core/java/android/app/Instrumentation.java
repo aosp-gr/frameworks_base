@@ -1236,18 +1236,6 @@ public class Instrumentation {
             setBuildField(packageName, "FINGERPRINT", snetFp);
             setBuildField(packageName, "MODEL", Build.MODEL + "\u200b");
         }
-
-        // Unlock monet in Gboard
-        if ("com.google.android.inputmethod.latin".equals(packageName)) {
-            setBuildField(packageName, "BRAND", "google");
-            setBuildField(packageName, "MANUFACTURER", "Google");
-            setBuildField(packageName, "DEVICE", "redfin");
-            setBuildField(packageName, "PRODUCT", "redfin");
-            setBuildField(packageName, "MODEL", "Pixel 5");
-            setBuildField(packageName, "ID", "SP1A.210812.015");
-            setBuildField(packageName, "SECURITY_PATCH", "2021-09-05");
-            setBuildField(packageName, "FINGERPRINT", "google/redfin/redfin:12/SP1A.210812.015/7679548:user/release-keys");
-        }
     }
 
     /**

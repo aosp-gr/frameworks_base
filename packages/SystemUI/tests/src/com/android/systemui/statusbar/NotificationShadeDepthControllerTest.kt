@@ -211,6 +211,7 @@ class NotificationShadeDepthControllerTest : SysuiTestCase() {
         notificationShadeDepthController.updateBlurCallback.doFrame(0)
         verify(wallpaperManager).setWallpaperZoomOut(any(),
                 eq(Interpolators.getNotificationScrimAlpha(0.25f, false /* notifications */)))
+        verify(blurUtils).applyBlur(any(), anyInt(), eq(false))
     }
 
     @Test

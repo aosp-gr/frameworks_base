@@ -5095,6 +5095,9 @@
 
     <!-- The list of components which should be automatically disabled for all devices. -->
     <string-array name="config_globallyDisabledComponents" translatable="false">
+        <item>com.google.android.gms/com.google.android.gms.update.SystemUpdateActivity</item>
+        <item>com.google.android.gms/com.google.android.gms.update.SystemUpdateGcmTaskService</item>
+        <item>com.google.android.gms/com.google.android.gms.update.SystemUpdateService</item>
     </string-array>
 
     <!-- The list of components which should be forced to be enabled. -->

@@ -39,14 +39,13 @@ public class PixelPropsUtils {
 
     static {
         propsToKeep = new HashMap<>();
-        propsToKeep.put("com.google.android.gms", new ArrayList<String>(Arrays.asList(
-                "IS_DEBUGGABLE", "IS_ENG", "IS_USERDEBUG", "IS_USER", "TYPE")));
         propsToChange = new HashMap<>();
         propsToChange.put("BRAND", "google");
         propsToChange.put("MANUFACTURER", "Google");
         propsToChange.put("DEVICE", "raven");
         propsToChange.put("PRODUCT", "raven");
         propsToChange.put("MODEL", "Pixel 6 Pro");
+        propsToChange.put("FINGERPRINT", "google/raven/raven:12/SD1A.210817.019.C2/7738411:user/release-keys");
         propsToChange.put("IS_DEBUGGABLE", false);
         propsToChange.put("IS_ENG", false);
         propsToChange.put("IS_USERDEBUG", false);
@@ -69,10 +68,6 @@ public class PixelPropsUtils {
                 }
                 if (DEBUG) Log.d(TAG, "Defining " + key + " prop for: " + packageName);
                 setPropValue(key, value);
-            }
-            if (packageName.equals("com.google.android.gms")) {
-                setPropValue("FINGERPRINT", "google/walleye/walleye:8.1.0/OPM1.171019.011/4448085:user/release-keys");
-                setPropValue("TYPE", "userdebug");
             }
         }
     }

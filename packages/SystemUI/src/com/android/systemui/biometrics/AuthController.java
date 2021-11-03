@@ -787,7 +787,7 @@ public class AuthController extends SystemUI implements CommandQueue.Callbacks,
                 .build(sensorIds, credentialAllowed, mFpProps, mFaceProps);
     }
 
-    public interface Callback {
+    interface Callback {
         /**
          * Called when authenticators are registered. If authenticators are already
          * registered before this call, this callback will never be triggered.

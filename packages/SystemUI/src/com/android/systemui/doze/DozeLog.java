@@ -214,14 +214,6 @@ public class DozeLog implements Dumpable {
     }
 
     /**
-     * Appends display state delayed by UDFPS event to the logs
-     * @param delayedDisplayState the display screen state that was delayed
-     */
-    public void traceDisplayStateDelayedByUdfps(int delayedDisplayState) {
-        mLogger.logDisplayStateDelayedByUdfps(delayedDisplayState);
-    }
-
-    /**
      * Appends display state changed event to the logs
      * @param displayState new DozeMachine state
      */

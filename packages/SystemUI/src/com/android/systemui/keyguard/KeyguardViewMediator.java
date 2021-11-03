@@ -818,7 +818,6 @@ public class KeyguardViewMediator extends SystemUI implements Dumpable,
 
     private final KeyguardStateController mKeyguardStateController;
     private final Lazy<KeyguardUnlockAnimationController> mKeyguardUnlockAnimationControllerLazy;
-    private boolean mWallpaperSupportsAmbientMode;
 
     /**
      * Injected constructor. See {@link KeyguardModule}.
@@ -2090,14 +2089,13 @@ public class KeyguardViewMediator extends SystemUI implements Dumpable,
 
             int flags = 0;
             if (mKeyguardViewControllerLazy.get().shouldDisableWindowAnimationsForUnlock()
-                    || mWakeAndUnlocking && !mWallpaperSupportsAmbientMode) {
+                    || (mWakeAndUnlocking && !mPulsing)
+                    || isAnimatingBetweenKeyguardAndSurfaceBehindOrWillBe()) {
                 flags |= WindowManagerPolicyConstants
                         .KEYGUARD_GOING_AWAY_FLAG_NO_WINDOW_ANIMATIONS;
             }
             if (mKeyguardViewControllerLazy.get().isGoingToNotificationShade()
-                    || mWakeAndUnlocking && mWallpaperSupportsAmbientMode) {
-                // When the wallpaper supports ambient mode, the scrim isn't fully opaque during
-                // wake and unlock and we should fade in the app on top of the wallpaper
+                    || (mWakeAndUnlocking && mPulsing)) {
                 flags |= WindowManagerPolicyConstants.KEYGUARD_GOING_AWAY_FLAG_TO_SHADE;
             }
             if (mKeyguardViewControllerLazy.get().isUnlockWithWallpaper()) {
@@ -2777,15 +2775,6 @@ public class KeyguardViewMediator extends SystemUI implements Dumpable,
      */
     public void setPulsing(boolean pulsing) {
         mPulsing = pulsing;
-    }
-
-    /**
-     * Set if the wallpaper supports ambient mode. This is used to trigger the right animation.
-     * In case it does support it, we have to fade in the incoming app, otherwise we'll reveal it
-     * with the light reveal scrim.
-     */
-    public void setWallpaperSupportsAmbientMode(boolean supportsAmbientMode) {
-        mWallpaperSupportsAmbientMode = supportsAmbientMode;
     }
 
     private static class StartKeyguardExitAnimParams {

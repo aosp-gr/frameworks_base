@@ -77,7 +77,6 @@ public class DozeScreenState implements DozeMachine.Part {
     private final Provider<UdfpsController> mUdfpsControllerProvider;
     @Nullable private UdfpsController mUdfpsController;
     private final DozeLog mDozeLog;
-    private final DozeScreenBrightness mDozeScreenBrightness;
 
     private int mPendingScreenState = Display.STATE_UNKNOWN;
     private SettableWakeLock mWakeLock;
@@ -91,8 +90,7 @@ public class DozeScreenState implements DozeMachine.Part {
             WakeLock wakeLock,
             AuthController authController,
             Provider<UdfpsController> udfpsControllerProvider,
-            DozeLog dozeLog,
-            DozeScreenBrightness dozeScreenBrightness) {
+            DozeLog dozeLog) {
         mDozeService = service;
         mHandler = handler;
         mParameters = parameters;
@@ -101,7 +99,6 @@ public class DozeScreenState implements DozeMachine.Part {
         mAuthController = authController;
         mUdfpsControllerProvider = udfpsControllerProvider;
         mDozeLog = dozeLog;
-        mDozeScreenBrightness = dozeScreenBrightness;
 
         updateUdfpsController();
         if (mUdfpsController == null) {
@@ -207,12 +204,6 @@ public class DozeScreenState implements DozeMachine.Part {
         if (screenState != Display.STATE_UNKNOWN) {
             if (DEBUG) Log.d(TAG, "setDozeScreenState(" + screenState + ")");
             mDozeService.setDozeScreenState(screenState);
-            if (screenState == Display.STATE_DOZE) {
-                // If we're entering doze, update the doze screen brightness. We might have been
-                // clamping it to the dim brightness during the screen off animation, and we should
-                // now change it to the brightness we actually want according to the sensor.
-                mDozeScreenBrightness.updateBrightnessAndReady(false /* force */);
-            }
             mPendingScreenState = Display.STATE_UNKNOWN;
             mWakeLock.setAcquired(false);
         }

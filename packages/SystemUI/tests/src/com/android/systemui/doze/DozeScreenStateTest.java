@@ -82,8 +82,6 @@ public class DozeScreenStateTest extends SysuiTestCase {
     private UdfpsController mUdfpsController;
     @Mock
     private DozeLog mDozeLog;
-    @Mock
-    private DozeScreenBrightness mDozeScreenBrightness;
 
     @Before
     public void setUp() throws Exception {
@@ -98,8 +96,7 @@ public class DozeScreenStateTest extends SysuiTestCase {
         mHandlerFake = new FakeHandler(Looper.getMainLooper());
         mWakeLock = new WakeLockFake();
         mScreen = new DozeScreenState(mServiceFake, mHandlerFake, mDozeHost, mDozeParameters,
-                mWakeLock, mAuthController, mUdfpsControllerProvider, mDozeLog,
-                mDozeScreenBrightness);
+                mWakeLock, mAuthController, mUdfpsControllerProvider, mDozeLog);
     }
 
     @Test

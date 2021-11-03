@@ -23,7 +23,6 @@ import androidx.test.filters.SmallTest
 import com.android.keyguard.KeyguardUpdateMonitor
 import com.android.keyguard.KeyguardUpdateMonitorCallback
 import com.android.systemui.SysuiTestCase
-import com.android.systemui.plugins.statusbar.StatusBarStateController
 import com.android.systemui.statusbar.NotificationShadeWindowController
 import com.android.systemui.statusbar.commandline.CommandRegistry
 import com.android.systemui.statusbar.phone.BiometricUnlockController
@@ -60,7 +59,6 @@ class AuthRippleControllerTest : SysuiTestCase() {
     @Mock private lateinit var biometricUnlockController: BiometricUnlockController
     @Mock private lateinit var udfpsControllerProvider: Provider<UdfpsController>
     @Mock private lateinit var udfpsController: UdfpsController
-    @Mock private lateinit var statusBarStateController: StatusBarStateController
 
     @Before
     fun setUp() {
@@ -78,7 +76,6 @@ class AuthRippleControllerTest : SysuiTestCase() {
             bypassController,
             biometricUnlockController,
             udfpsControllerProvider,
-            statusBarStateController,
             rippleView
         )
         controller.init()

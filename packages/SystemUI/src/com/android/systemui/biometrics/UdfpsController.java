@@ -845,10 +845,6 @@ public class UdfpsController implements DozeReceiver {
             return;
         }
 
-        if (!mKeyguardUpdateMonitor.isFingerprintDetectionRunning()) {
-            return;
-        }
-
         mAodInterruptRunnable = () -> {
             mIsAodInterruptActive = true;
             // Since the sensor that triggers the AOD interrupt doesn't provide

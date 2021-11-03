@@ -44,7 +44,7 @@ public class LockIconView extends FrameLayout implements Dumpable {
     private int mRadius;
 
     private ImageView mLockIcon;
-    private ImageView mBgView;
+    private ImageView mUnlockBgView;
 
     private int mLockIconColor;
 
@@ -57,19 +57,19 @@ public class LockIconView extends FrameLayout implements Dumpable {
     public void onFinishInflate() {
         super.onFinishInflate();
         mLockIcon = findViewById(R.id.lock_icon);
-        mBgView = findViewById(R.id.lock_icon_bg);
+        mUnlockBgView = findViewById(R.id.lock_icon_bg);
     }
 
     void updateColorAndBackgroundVisibility(boolean useBackground) {
-        if (useBackground && mLockIcon.getDrawable() != null) {
+        if (useBackground) {
             mLockIconColor = Utils.getColorAttrDefaultColor(getContext(),
                     android.R.attr.textColorPrimary);
-            mBgView.setBackground(getContext().getDrawable(R.drawable.fingerprint_bg));
-            mBgView.setVisibility(View.VISIBLE);
+            mUnlockBgView.setBackground(getContext().getDrawable(R.drawable.fingerprint_bg));
+            mUnlockBgView.setVisibility(View.VISIBLE);
         } else {
             mLockIconColor = Utils.getColorAttrDefaultColor(getContext(),
                     R.attr.wallpaperTextColorAccent);
-            mBgView.setVisibility(View.GONE);
+            mUnlockBgView.setVisibility(View.GONE);
         }
 
         mLockIcon.setImageTintList(ColorStateList.valueOf(mLockIconColor));
@@ -77,14 +77,9 @@ public class LockIconView extends FrameLayout implements Dumpable {
 
     void setImageDrawable(Drawable drawable) {
         mLockIcon.setImageDrawable(drawable);
-        if (drawable == null) {
-            mBgView.setVisibility(View.INVISIBLE);
-        } else {
-            mBgView.setVisibility(View.VISIBLE);
-        }
     }
 
-    public void setCenterLocation(@NonNull PointF center, int radius) {
+    void setCenterLocation(@NonNull PointF center, int radius) {
         mLockIconCenter = center;
         mRadius = radius;
 

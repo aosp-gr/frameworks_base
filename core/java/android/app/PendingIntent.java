@@ -53,6 +53,7 @@ import android.os.RemoteException;
 import android.os.UserHandle;
 import android.util.AndroidException;
 import android.util.ArraySet;
+import android.util.Log;
 import android.util.proto.ProtoOutputStream;
 
 import com.android.internal.os.IResultReceiver;
@@ -372,7 +373,7 @@ public final class PendingIntent implements Parcelable {
                     + " using FLAG_IMMUTABLE, only use FLAG_MUTABLE if some functionality"
                     + " depends on the PendingIntent being mutable, e.g. if it needs to"
                     + " be used with inline replies or bubbles.";
-                throw new IllegalArgumentException(msg);
+            Log.w(TAG, msg);
         }
     }
 

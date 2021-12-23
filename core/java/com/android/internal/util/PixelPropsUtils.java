@@ -30,6 +30,8 @@ public class PixelPropsUtils {
     private static final boolean DEBUG = false;
 
     private static final Map<String, Object> propsToChange;
+    private static final Map<String, Object> propsToChangeP6;
+    private static final Map<String, Object> propsToChangeP5;
     private static final Map<String, ArrayList<String>> propsToKeep;
     private static final String[] extraPackagesToChange = {
         "com.android.chrome",
@@ -49,21 +51,33 @@ public class PixelPropsUtils {
         "com.google.android.GoogleCameraEng2",
         "com.google.android.GoogleCameraAsp",
     };
+    private static final String[] packagesToChangeP5 = {
+            "com.google.android.tts",
+            "com.google.android.googlequicksearchbox",
+            "com.google.android.apps.recorder",
+            "com.google.android.apps.inputmethod.latin"
+    };
 
     static {
         propsToKeep = new HashMap<>();
         propsToChange = new HashMap<>();
         propsToChange.put("BRAND", "google");
         propsToChange.put("MANUFACTURER", "Google");
-        propsToChange.put("DEVICE", "raven");
-        propsToChange.put("PRODUCT", "raven");
-        propsToChange.put("MODEL", "Pixel 6 Pro");
-        propsToChange.put("FINGERPRINT", "google/raven/raven:12/SQ1D.211205.017/7955197:user/release-keys");
         propsToChange.put("IS_DEBUGGABLE", false);
         propsToChange.put("IS_ENG", false);
         propsToChange.put("IS_USERDEBUG", false);
         propsToChange.put("IS_USER", true);
         propsToChange.put("TYPE", "user");
+        propsToChangeP6 = new HashMap<>();
+        propsToChangeP6.put("DEVICE", "raven");
+        propsToChangeP6.put("PRODUCT", "raven");
+        propsToChangeP6.put("MODEL", "Pixel 6 Pro");
+        propsToChangeP6.put("FINGERPRINT", "google/raven/raven:12/SQ1D.211205.017/7955197:user/release-keys");
+        propsToChangeP5 = new HashMap<>();
+        propsToChangeP5.put("DEVICE", "redfin");
+        propsToChangeP5.put("PRODUCT", "redfin");
+        propsToChangeP5.put("MODEL", "Pixel 5");
+        propsToChangeP5.put("FINGERPRINT", "google/redfin/redfin:12/SQ1A.211205.008/7888514:user/release-keys");
     }
 
     public static void setProps(String packageName) {
@@ -73,6 +87,11 @@ public class PixelPropsUtils {
         if ((packageName.startsWith("com.google.") && !Arrays.asList(packagesToKeep).contains(packageName))
                 || Arrays.asList(extraPackagesToChange).contains(packageName)) {
             if (DEBUG) Log.d(TAG, "Defining props for: " + packageName);
+            if (Arrays.asList(packagesToChangeP5).contains(packageName)) {
+                propsToChange.putAll(propsToChangeP5);
+            } else {
+                propsToChange.putAll(propsToChangeP6);
+            }
             for (Map.Entry<String, Object> prop : propsToChange.entrySet()) {
                 String key = prop.getKey();
                 Object value = prop.getValue();

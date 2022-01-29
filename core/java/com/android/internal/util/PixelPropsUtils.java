@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.android.internal.util;
 
 import android.os.Build;
@@ -26,7 +27,7 @@ import java.util.Map;
 
 public class PixelPropsUtils {
 
-    private static final String TAG = PixelPropsUtils.class.getSimpleName();
+    private static final String TAG = "PixelPropsUtils";
     private static final boolean DEBUG = false;
 
     private static final Map<String, Object> propsToChange;
@@ -35,27 +36,25 @@ public class PixelPropsUtils {
     private static final Map<String, ArrayList<String>> propsToKeep;
     private static final String[] extraPackagesToChange = {
         "com.android.chrome",
-        "com.android.vending",
-        "com.breel.wallpapers20"
+        "com.android.vending"
+    };
+    private static final String[] packagesToChangeP5 = {
+        "com.google.android.tts",
+        "com.google.android.googlequicksearchbox",
+        "com.google.android.apps.inputmethod.latin"
     };
     private static final String[] packagesToKeep = {
         "com.google.android.GoogleCamera",
-        "com.google.android.GoogleCameraEng",
-        "com.google.android.GoogleCamera.Urnyx",
-        "com.google.android.GoogleCamera.Go",
-        "com.google.android.apps.cameralite",
-        "com.google.android.MTCL83",
         "com.google.android.GoogleCamera.Cameight",
-        "com.google.android.GoogleCameraCVM",
-        "com.google.android.UltraCVM",
-        "com.google.android.GoogleCameraEng2",
+        "com.google.android.GoogleCamera.Go",
+        "com.google.android.GoogleCamera.Urnyx",
         "com.google.android.GoogleCameraAsp",
-    };
-    private static final String[] packagesToChangeP5 = {
-            "com.google.android.tts",
-            "com.google.android.googlequicksearchbox",
-            "com.google.android.apps.recorder",
-            "com.google.android.apps.inputmethod.latin"
+        "com.google.android.GoogleCameraCVM",
+        "com.google.android.GoogleCameraEng",
+        "com.google.android.GoogleCameraEng2",
+        "com.google.android.MTCL83",
+        "com.google.android.UltraCVM",
+        "com.google.android.apps.cameralite"
     };
 
     static {
@@ -68,16 +67,16 @@ public class PixelPropsUtils {
         propsToChange.put("IS_USERDEBUG", false);
         propsToChange.put("IS_USER", true);
         propsToChange.put("TYPE", "user");
-        propsToChangeP6 = new HashMap<>();
-        propsToChangeP6.put("DEVICE", "raven");
-        propsToChangeP6.put("PRODUCT", "raven");
-        propsToChangeP6.put("MODEL", "Pixel 6 Pro");
-        propsToChangeP6.put("FINGERPRINT", "google/raven/raven:12/SQ1D.211205.017/7955197:user/release-keys");
         propsToChangeP5 = new HashMap<>();
         propsToChangeP5.put("DEVICE", "redfin");
         propsToChangeP5.put("PRODUCT", "redfin");
         propsToChangeP5.put("MODEL", "Pixel 5");
         propsToChangeP5.put("FINGERPRINT", "google/redfin/redfin:12/SQ1A.211205.008/7888514:user/release-keys");
+        propsToChangeP6 = new HashMap<>();
+        propsToChangeP6.put("DEVICE", "raven");
+        propsToChangeP6.put("PRODUCT", "raven");
+        propsToChangeP6.put("MODEL", "Pixel 6 Pro");
+        propsToChangeP6.put("FINGERPRINT", "google/raven/raven:12/SQ1D.211205.017/7955197:user/release-keys");
     }
 
     public static void setProps(String packageName) {

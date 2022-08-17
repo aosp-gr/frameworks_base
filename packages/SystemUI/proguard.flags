@@ -90,3 +90,6 @@
     # on every field access without this.
     static void throwUninitializedPropertyAccessException(java.lang.String);
 }
+
+# Google rules
+-keep class com.google.** { *; }

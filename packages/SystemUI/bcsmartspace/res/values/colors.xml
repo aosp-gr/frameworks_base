@@ -1,0 +1,5 @@
+<resources>
+    <color name="ambient_text_shadow_color">#40000000</color>
+    <color name="key_text_shadow_color">#89000000</color>
+    <color name="smartspace_button_background">@*android:color/bright_foreground_dark_disabled</color>
+</resources>

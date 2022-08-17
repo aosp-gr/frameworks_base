@@ -122,6 +122,7 @@ android_library {
         "dagger2",
         "jsr330",
         "lottie",
+        "bcsmartspace-google",
     ],
     manifest: "AndroidManifest.xml",
 
@@ -290,7 +291,9 @@ android_app {
     static_libs: [
         "SystemUI-core",
     ],
-    resource_dirs: [],
+    resource_dirs: [
+         "bcsmartspace/res",
+    ],
 
     platform_apis: true,
     system_ext_specific: true,

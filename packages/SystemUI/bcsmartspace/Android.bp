@@ -1,0 +1,5 @@
+java_import {
+    name: "bcsmartspace-google",
+    jars: ["bcsmartspace.jar"],
+    sdk_version: "current",
+}
